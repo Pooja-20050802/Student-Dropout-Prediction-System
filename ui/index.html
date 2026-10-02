@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dropout Prediction</title>
+
+```
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+        margin: 0;
+        padding: 40px;
+    }
+
+    .container {
+        max-width: 650px;
+        margin: auto;
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    label {
+        display: block;
+        margin-top: 15px;
+        font-weight: bold;
+    }
+
+    input {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        box-sizing: border-box;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 25px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    #result {
+        margin-top: 25px;
+        padding: 15px;
+        text-align: center;
+        font-size: 20px;
+        font-weight: bold;
+    }
+</style>
+```
+
+</head>
+
+<body>
+
+<div class="container">
+
+```
+<h1>Student Dropout Prediction</h1>
+
+<form id="predictionForm">
+
+    <label>Age at Enrollment</label>
+    <input id="age" type="number" value="20" required>
+
+    <label>Admission Grade</label>
+    <input id="admission_grade" type="number" step="0.1" value="127.3" required>
+
+    <label>1st Semester Enrolled Units</label>
+    <input id="sem1_enrolled" type="number" value="6" required>
+
+    <label>1st Semester Approved Units</label>
+    <input id="sem1_approved" type="number" value="6" required>
+
+    <label>1st Semester Grade</label>
+    <input id="sem1_grade" type="number" step="0.1" value="13.5" required>
+
+    <label>2nd Semester Enrolled Units</label>
+    <input id="sem2_enrolled" type="number" value="6" required>
+
+    <label>2nd Semester Approved Units</label>
+    <input id="sem2_approved" type="number" value="5" required>
+
+    <label>2nd Semester Grade</label>
+    <input id="sem2_grade" type="number" step="0.1" value="12.5" required>
+
+    <button id="predictButton" type="submit">
+        Predict
+    </button>
+
+</form>
+
+<div id="result"></div>
+```
+
+</div>
+
+<script>
+
+const form = document.getElementById("predictionForm");
+const result = document.getElementById("result");
+
+form.addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    const student = {
+
+        marital_status: 1,
+        application_mode: 17,
+        application_order: 1,
+        course: 171,
+        daytime_evening_attendance: 1,
+        previous_qualification: 1,
+        previous_qualification_grade: 122.0,
+        nationality: 1,
+        mothers_qualification: 13,
+        fathers_qualification: 10,
+        mothers_occupation: 6,
+        fathers_occupation: 5,
+
+        admission_grade:
+            Number(document.getElementById("admission_grade").value),
+
+        displaced: 1,
+        educational_special_needs: 0,
+        debtor: 0,
+        tuition_fees_up_to_date: 1,
+        gender: 1,
+        scholarship_holder: 0,
+
+        age_at_enrollment:
+            Number(document.getElementById("age").value),
+
+        international: 0,
+
+        curricular_units_1st_sem_credited: 0,
+
+        curricular_units_1st_sem_enrolled:
+            Number(document.getElementById("sem1_enrolled").value),
+
+        curricular_units_1st_sem_evaluations:
+            Number(document.getElementById("sem1_enrolled").value),
+
+        curricular_units_1st_sem_approved:
+            Number(document.getElementById("sem1_approved").value),
+
+        curricular_units_1st_sem_grade:
+            Number(document.getElementById("sem1_grade").value),
+
+        curricular_units_1st_sem_without_evaluations: 0,
+
+        curricular_units_2nd_sem_credited: 0,
+
+        curricular_units_2nd_sem_enrolled:
+            Number(document.getElementById("sem2_enrolled").value),
+
+        curricular_units_2nd_sem_evaluations:
+            Number(document.getElementById("sem2_enrolled").value),
+
+        curricular_units_2nd_sem_approved:
+            Number(document.getElementById("sem2_approved").value),
+
+        curricular_units_2nd_sem_grade:
+            Number(document.getElementById("sem2_grade").value),
+
+        curricular_units_2nd_sem_without_evaluations: 0,
+
+        unemployment_rate: 11.1,
+        inflation_rate: 0.6,
+        gdp: 2.02
+    };
+
+    result.textContent = "Predicting...";
+
+    try {
+
+        const response = await fetch(
+            "http://127.0.0.1:8000/predict",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(student)
+            }
+        );
+
+        const data = await response.json();
+
+        if (response.ok) {
+            result.textContent =
+                "Prediction: " + data.prediction;
+        } else {
+            result.textContent =
+                "Error: " + JSON.stringify(data);
+        }
+
+    } catch (error) {
+
+        result.textContent =
+            "Could not connect to prediction API.";
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>
